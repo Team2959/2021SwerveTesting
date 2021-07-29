@@ -39,13 +39,16 @@ class SwerveModule {
 
   rev::CANEncoder m_driveEncoder{m_driveMotor.GetEncoder()};
   rev::CANEncoder m_turningEncoder{m_turningMotor.GetAlternateEncoder(rev::CANEncoder::AlternateEncoderType::kQuadrature, kEncoderResolution)};
+  
+  rev::CANPIDController m_drivePIDController{m_driveMotor};
+  rev::CANPIDController m_turningPIDController{m_turningMotor};
 
-  frc2::PIDController m_drivePIDController{1.0, 0, 0};
+  /*frc2::PIDController m_drivePIDController{1.0, 0, 0};
   frc::ProfiledPIDController<units::radians> m_turningPIDController{
       1.0,
       0.0,
       0.0,
-      {kModuleMaxAngularVelocity, kModuleMaxAngularAcceleration}};
+      {kModuleMaxAngularVelocity, kModuleMaxAngularAcceleration}};*/
 
   frc::SimpleMotorFeedforward<units::meters> m_driveFeedforward{1_V,
                                                                 3_V / 1_mps};

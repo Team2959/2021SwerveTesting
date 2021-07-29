@@ -18,6 +18,10 @@ SwerveModule::SwerveModule(const int driveMotorChannel,
   m_driveEncoder.SetPositionConversionFactor(kDrivePositionFactor);
   m_driveEncoder.SetVelocityConversionFactor(kDrivePositionFactor / 60.0);
 
+  m_drivePIDController.SetP(1.0);
+  m_drivePIDController.SetI(0.0);
+  m_drivePIDController.SetD(0.0);
+
   // Set the distance (in this case, angle) per pulse for the turning encoder.
   // This is the the angle through an entire rotation (2 * wpi::math::pi)
   // divided by the encoder resolution.
@@ -27,6 +31,10 @@ SwerveModule::SwerveModule(const int driveMotorChannel,
   // to be continuous.
   m_turningPIDController.EnableContinuousInput(-units::radian_t(wpi::math::pi),
                                                units::radian_t(wpi::math::pi));
+
+  m_turningPIDController.SetP(1.0);
+  m_turningPIDController.SetI(0.0);
+  m_turningPIDController.SetD(0.0);
 }
 
 frc::SwerveModuleState SwerveModule::GetState() {
