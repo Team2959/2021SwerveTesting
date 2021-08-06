@@ -26,15 +26,6 @@ SwerveModule::SwerveModule(const int driveMotorChannel,
   // This is the the angle through an entire rotation (2 * wpi::math::pi)
   // divided by the encoder resolution.
   m_turningEncoder.SetPositionConversionFactor(2 * wpi::math::pi / kEncoderResolution);
-
-  // Limit the PID Controller's input range between -pi and pi and set the input
-  // to be continuous.
-  m_turningPIDController.EnableContinuousInput(-units::radian_t(wpi::math::pi),
-                                               units::radian_t(wpi::math::pi));
-
-  m_turningPIDController.SetP(1.0);
-  m_turningPIDController.SetI(0.0);
-  m_turningPIDController.SetD(0.0);
 }
 
 frc::SwerveModuleState SwerveModule::GetState() {
@@ -44,24 +35,16 @@ frc::SwerveModuleState SwerveModule::GetState() {
 
 void SwerveModule::SetDesiredState(
     const frc::SwerveModuleState& referenceState) {
-  // Optimize the reference state to avoid spinning further than 90 degrees
-  const auto state = frc::SwerveModuleState::Optimize(
+    // Optimize the reference state to avoid spinning further than 90 degrees
+    const auto state = frc::SwerveModuleState::Optimize(
       referenceState, units::radian_t(m_turningEncoder.GetPosition()));
 
-  // Calculate the drive output from the drive PID controller.
-  const auto driveOutput = m_drivePIDController.Calculate(
-      m_driveEncoder.GetVelocity(), state.speed.to<double>());
+    const auto driveFeedforward = m_driveFeedforward.Calculate(state.speed);
+    m_drivePIDController.SetReference(state.speed.to<double>(), rev::ControlType::kVelocity, 0, driveFeedforward.to<double>(), rev::CANPIDController::ArbFFUnits::kVoltage);
+    
+    auto delta = state.angle - frc::Rotation2d(units::radian_t(m_turningEncoder.GetPosition()));
+    auto setpoint = units::radian_t(m_turningEncoder.GetPosition()) + delta.Radians();
 
-  const auto driveFeedforward = m_driveFeedforward.Calculate(state.speed);
-
-  // Calculate the turning motor output from the turning PID controller.
-  const auto turnOutput = m_turningPIDController.Calculate(
-      units::radian_t(m_turningEncoder.GetPosition()), state.angle.Radians());
-
-  const auto turnFeedforward = m_turnFeedforward.Calculate(
-      m_turningPIDController.GetSetpoint().velocity);
-
-  // Set the motor outputs.
-  m_driveMotor.SetVoltage(units::volt_t{driveOutput} + driveFeedforward);
-  m_turningMotor.SetVoltage(units::volt_t{turnOutput} + turnFeedforward);
-}
+    m_turningPIDController.SetReference(setpoint.to<double>(), rev::ControlType::kPosition);
+    
+    auto delta = state.angle - frc::Rotation2d(units::radian_t(m_turningEncoder.GetPosition()));
