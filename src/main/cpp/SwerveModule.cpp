@@ -46,5 +46,5 @@ void SwerveModule::SetDesiredState(
     auto setpoint = units::radian_t(m_turningEncoder.GetPosition()) + delta.Radians();
 
     m_turningPIDController.SetReference(setpoint.to<double>(), rev::ControlType::kPosition);
-    
-    auto delta = state.angle - frc::Rotation2d(units::radian_t(m_turningEncoder.GetPosition()));
+
+}
