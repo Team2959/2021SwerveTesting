@@ -27,3 +27,11 @@ void Drivetrain::UpdateOdometry() {
                     m_frontRight.GetState(), m_backLeft.GetState(),
                     m_backRight.GetState());
 }
+
+void Drivetrain::SetInitialSwervePositions()
+{
+  m_frontLeft.SetInitialPosition(0);
+  m_frontRight.SetInitialPosition(0);
+  m_backLeft.SetInitialPosition(0);
+  m_backRight.SetInitialPosition(0);
+}

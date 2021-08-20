@@ -15,12 +15,14 @@
 #include <units/velocity.h>
 #include <units/voltage.h>
 #include <wpi/math>
+#include <frc/DutyCycleEncoder.h>
 
 class SwerveModule {
  public:
-    SwerveModule(int driveMotorChannel, int turningMotorChannel);
+    SwerveModule(int driveMotorChannel, int turningMotorChannel, int dutyCycleChannel);
     frc::SwerveModuleState GetState();
     void SetDesiredState(const frc::SwerveModuleState& state);
+    void SetInitialPosition(double offsetInRadians);
 
  private:
     static constexpr double kWheelRadius = 2 * 0.254; // 2" * 0.254 m / inch
@@ -37,11 +39,14 @@ class SwerveModule {
     rev::CANSparkMax m_driveMotor;
     rev::CANSparkMax m_turningMotor;
 
+    
+    frc::DutyCycleEncoder m_dutyCycleEncoder;
+
     rev::CANEncoder m_driveEncoder{m_driveMotor.GetEncoder()};
     rev::CANEncoder m_turningEncoder{m_turningMotor.GetAlternateEncoder(rev::CANEncoder::AlternateEncoderType::kQuadrature, kEncoderResolution)};
     
-    rev::CANPIDController m_drivePIDController{m_driveMotor};
-    rev::CANPIDController m_turningPIDController{m_turningMotor};
+    rev::CANPIDController m_drivePIDController{m_driveMotor.GetPIDController()};
+    rev::CANPIDController m_turningPIDController{m_turningMotor.GetPIDController()};
 
     //   frc2::PIDController m_drivePIDController{1.0, 0, 0};
     /*frc::ProfiledPIDController<units::radians> m_turningPIDController{
@@ -50,8 +55,8 @@ class SwerveModule {
         0.0,
         {kModuleMaxAngularVelocity, kModuleMaxAngularAcceleration}};*/
 
-    frc::SimpleMotorFeedforward<units::meters> m_driveFeedforward{1_V,
-                                                                    3_V / 1_mps};
+    /*frc::SimpleMotorFeedforward<units::meters> m_driveFeedforward{1_V,
+                                                                    3_V / 1_mps};*/
     /*frc::SimpleMotorFeedforward<units::radians> m_turnFeedforward{
         1_V, 0.5_V / 1_rad_per_s};*/
 };

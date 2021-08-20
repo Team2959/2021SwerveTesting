@@ -8,9 +8,11 @@
 #include <wpi/math>
 
 SwerveModule::SwerveModule(const int driveMotorChannel,
-                           const int turningMotorChannel)
+                           const int turningMotorChannel,
+                           const int dutyCycleChannel)
     : m_driveMotor(driveMotorChannel, rev::CANSparkMaxLowLevel::MotorType::kBrushless),
-     m_turningMotor(turningMotorChannel, rev::CANSparkMaxLowLevel::MotorType::kBrushless)
+     m_turningMotor(turningMotorChannel, rev::CANSparkMaxLowLevel::MotorType::kBrushless),
+     m_dutyCycleEncoder(dutyCycleChannel)
 {
   // Set the distance per pulse for the drive encoder. We can simply use the
   // distance traveled for one rotation of the wheel divided by the encoder
@@ -22,10 +24,14 @@ SwerveModule::SwerveModule(const int driveMotorChannel,
   m_drivePIDController.SetI(0.0);
   m_drivePIDController.SetD(0.0);
 
+  m_turningPIDController.SetP(1.0);
+  m_turningPIDController.SetI(0.0);
+  m_turningPIDController.SetD(0.0);
+
   // Set the distance (in this case, angle) per pulse for the turning encoder.
   // This is the the angle through an entire rotation (2 * wpi::math::pi)
   // divided by the encoder resolution.
-  m_turningEncoder.SetPositionConversionFactor(2 * wpi::math::pi / kEncoderResolution);
+  m_turningEncoder.SetPositionConversionFactor(2 * wpi::math::pi /*/ kEncoderResolution*/);
 }
 
 frc::SwerveModuleState SwerveModule::GetState() {
@@ -39,12 +45,16 @@ void SwerveModule::SetDesiredState(
     const auto state = frc::SwerveModuleState::Optimize(
       referenceState, units::radian_t(m_turningEncoder.GetPosition()));
 
-    const auto driveFeedforward = m_driveFeedforward.Calculate(state.speed);
-    m_drivePIDController.SetReference(state.speed.to<double>(), rev::ControlType::kVelocity, 0, driveFeedforward.to<double>(), rev::CANPIDController::ArbFFUnits::kVoltage);
+    m_drivePIDController.SetReference(state.speed.to<double>(), rev::ControlType::kVelocity);
     
     auto delta = state.angle - frc::Rotation2d(units::radian_t(m_turningEncoder.GetPosition()));
     auto setpoint = units::radian_t(m_turningEncoder.GetPosition()) + delta.Radians();
 
     m_turningPIDController.SetReference(setpoint.to<double>(), rev::ControlType::kPosition);
 
+}
+
+void SwerveModule::SetInitialPosition(double offsetInRadians)
+{
+  m_turningEncoder.SetPosition(offsetInRadians);
 }
