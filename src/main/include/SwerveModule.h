@@ -19,22 +19,24 @@
 
 class SwerveModule {
  public:
-    SwerveModule(int driveMotorChannel, int turningMotorChannel, int dutyCycleChannel);
+    SwerveModule(int driveMotorChannel, int turningMotorChannel, int dutyCycleChannel, std::string name);
     frc::SwerveModuleState GetState();
     void SetDesiredState(const frc::SwerveModuleState& state);
     void SetInitialPosition(double offsetInRadians);
+    void DirectDrive(bool drive, double percentage);
 
  private:
-    static constexpr double kWheelRadius = 2 * 0.254; // 2" * 0.254 m / inch
+    static constexpr double kWheelRadius = 2.0 * 0.254; // 2" * 0.254 m / inch
     static constexpr int kEncoderResolution = 4096;
     const double kGearboxRatio = 1.0 / 6.86; // One turn of the wheel is 6.86 turns of the motor
-    const double kDrivePositionFactor = (2 * wpi::math::pi * kWheelRadius * kGearboxRatio);
+    const double kDrivePositionFactor = (2.0 * wpi::math::pi * kWheelRadius * kGearboxRatio);
 
     static constexpr auto kModuleMaxAngularVelocity =
         wpi::math::pi * 1_rad_per_s;  // radians per second
     static constexpr auto kModuleMaxAngularAcceleration =
         wpi::math::pi * 2_rad_per_s / 1_s;  // radians per second^2
 
+    std::string m_name;
 
     rev::CANSparkMax m_driveMotor;
     rev::CANSparkMax m_turningMotor;

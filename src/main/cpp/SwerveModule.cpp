@@ -6,10 +6,12 @@
 
 #include <frc/geometry/Rotation2d.h>
 #include <wpi/math>
+#include <frc/smartdashboard/SmartDashboard.h>
 
 SwerveModule::SwerveModule(const int driveMotorChannel,
                            const int turningMotorChannel,
-                           const int dutyCycleChannel)
+                           const int dutyCycleChannel,
+                           std::string name)
     : m_driveMotor(driveMotorChannel, rev::CANSparkMaxLowLevel::MotorType::kBrushless),
      m_turningMotor(turningMotorChannel, rev::CANSparkMaxLowLevel::MotorType::kBrushless),
      m_dutyCycleEncoder(dutyCycleChannel)
@@ -31,7 +33,8 @@ SwerveModule::SwerveModule(const int driveMotorChannel,
   // Set the distance (in this case, angle) per pulse for the turning encoder.
   // This is the the angle through an entire rotation (2 * wpi::math::pi)
   // divided by the encoder resolution.
-  m_turningEncoder.SetPositionConversionFactor(2 * wpi::math::pi /*/ kEncoderResolution*/);
+  m_turningEncoder.SetPositionConversionFactor(2.0 * wpi::math::pi /*/ kEncoderResolution*/);
+  m_name = name;
 }
 
 frc::SwerveModuleState SwerveModule::GetState() {
@@ -45,16 +48,28 @@ void SwerveModule::SetDesiredState(
     const auto state = frc::SwerveModuleState::Optimize(
       referenceState, units::radian_t(m_turningEncoder.GetPosition()));
 
-    m_drivePIDController.SetReference(state.speed.to<double>(), rev::ControlType::kVelocity);
+    frc::SmartDashboard::PutNumber(m_name + "/Current Speed", m_driveEncoder.GetVelocity());
+    frc::SmartDashboard::PutNumber(m_name + "/Target Speed", state.speed.to<double>());
+    //m_drivePIDController.SetReference(state.speed.to<double>(), rev::ControlType::kVelocity);
     
     auto delta = state.angle - frc::Rotation2d(units::radian_t(m_turningEncoder.GetPosition()));
     auto setpoint = units::radian_t(m_turningEncoder.GetPosition()) + delta.Radians();
 
-    m_turningPIDController.SetReference(setpoint.to<double>(), rev::ControlType::kPosition);
+    frc::SmartDashboard::PutNumber(m_name + "/Current Angle", m_turningEncoder.GetPosition());
+    frc::SmartDashboard::PutNumber(m_name + "/Target Angle", setpoint.to<double>());
+    //m_turningPIDController.SetReference(setpoint.to<double>(), rev::ControlType::kPosition);
 
 }
 
 void SwerveModule::SetInitialPosition(double offsetInRadians)
 {
   m_turningEncoder.SetPosition(offsetInRadians);
+}
+
+void SwerveModule::DirectDrive(bool drive, double percentage)
+{
+  if (drive)
+    m_driveMotor.Set(percentage);
+  else
+    m_turningMotor.Set(percentage);
 }

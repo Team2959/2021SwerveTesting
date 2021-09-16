@@ -4,6 +4,8 @@
 
 #include "Drivetrain.h"
 
+#include <frc/smartdashboard/SmartDashboard.h>
+
 void Drivetrain::Drive(units::meters_per_second_t xSpeed,
                        units::meters_per_second_t ySpeed,
                        units::radians_per_second_t rot, bool fieldRelative) {
@@ -34,4 +36,23 @@ void Drivetrain::SetInitialSwervePositions()
   m_frontRight.SetInitialPosition(0);
   m_backLeft.SetInitialPosition(0);
   m_backRight.SetInitialPosition(0);
+}
+
+void Drivetrain::DirectMotorDrive(bool drive, int motor, double percentage)
+{
+  switch (motor)
+  {
+    case 1:
+      m_frontLeft.DirectDrive(drive, percentage);
+      break;
+    case 2:
+      m_frontRight.DirectDrive(drive, percentage);
+      break;
+    case 3:
+      m_backRight.DirectDrive(drive, percentage);
+      break;
+    case 4:
+      m_backLeft.DirectDrive(drive, percentage);
+      break;
+  }
 }

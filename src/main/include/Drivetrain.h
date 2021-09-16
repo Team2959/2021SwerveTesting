@@ -24,6 +24,7 @@ class Drivetrain {
              bool fieldRelative);
   void UpdateOdometry();
   void SetInitialSwervePositions();
+  void DirectMotorDrive(bool drive, int motor, double percentage);
 
   static constexpr units::meters_per_second_t kMaxSpeed =
       3.0_mps;  // 3 meters per second
@@ -36,10 +37,10 @@ class Drivetrain {
   frc::Translation2d m_backLeftLocation{-0.381_m, +0.381_m};
   frc::Translation2d m_backRightLocation{-0.381_m, -0.381_m};
 
-  SwerveModule m_frontLeft{1, 11, 1};
-  SwerveModule m_frontRight{2, 12, 2};
-  SwerveModule m_backLeft{4, 14, 4};
-  SwerveModule m_backRight{3, 13, 3};
+  SwerveModule m_frontLeft{1, 11, 1, "front left"};
+  SwerveModule m_frontRight{2, 12, 2, "front right"};
+  SwerveModule m_backLeft{4, 14, 4, "back left"};
+  SwerveModule m_backRight{3, 13, 3, "back right"};
 
   AHRS m_navX{frc::SPI::kMXP};
 
