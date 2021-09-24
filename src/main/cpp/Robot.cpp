@@ -17,9 +17,9 @@ class Robot : public frc::TimedRobot {
 public:
     void RobotInit() override
     {
-        std::thread threadRunFast{Dashboard::RunFast};
-        std::thread threadRunSlow{Dashboard::RunSlow};
-        std::thread threadRunReallySlow{Dashboard::RunReallySlow};
+        //std::thread threadRunFast{Dashboard::RunFast};
+        //std::thread threadRunSlow{Dashboard::RunSlow};
+        //std::thread threadRunReallySlow{Dashboard::RunReallySlow};
         m_swerve.SetInitialSwervePositions();
 
         m_conditioning.SetDeadband(0.2);

@@ -59,6 +59,8 @@ void SwerveModule::SetDesiredState(
     frc::SmartDashboard::PutNumber(m_name + "/Target Angle", setpoint.to<double>());
     //m_turningPIDController.SetReference(setpoint.to<double>(), rev::ControlType::kPosition);
 
+    frc::SmartDashboard::PutNumber(m_name + "/Current Angle Abs (Dist)", m_dutyCycleEncoder.GetDistance());
+    frc::SmartDashboard::PutNumber(m_name + "/Current Angle Abs (Freq)", m_dutyCycleEncoder.GetFrequency());
 }
 
 void SwerveModule::SetInitialPosition(double offsetInRadians)
