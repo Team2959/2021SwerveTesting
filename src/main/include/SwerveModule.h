@@ -15,7 +15,8 @@
 #include <units/velocity.h>
 #include <units/voltage.h>
 #include <wpi/math>
-#include <frc/DutyCycleEncoder.h>
+#include <frc/DutyCycle.h>
+#include <frc/DigitalInput.h>
 
 class SwerveModule {
  public:
@@ -41,8 +42,8 @@ class SwerveModule {
     rev::CANSparkMax m_driveMotor;
     rev::CANSparkMax m_turningMotor;
 
-    
-    frc::DutyCycleEncoder m_dutyCycleEncoder;
+    frc::DigitalInput m_dutyCycleInput;
+    frc::DutyCycle m_dutyCycleEncoder;
 
     rev::CANEncoder m_driveEncoder{m_driveMotor.GetEncoder()};
     rev::CANEncoder m_turningEncoder{m_turningMotor.GetAlternateEncoder(rev::CANEncoder::AlternateEncoderType::kQuadrature, kEncoderResolution)};

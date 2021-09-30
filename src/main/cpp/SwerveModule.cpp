@@ -14,7 +14,8 @@ SwerveModule::SwerveModule(const int driveMotorChannel,
                            std::string name)
     : m_driveMotor(driveMotorChannel, rev::CANSparkMaxLowLevel::MotorType::kBrushless),
      m_turningMotor(turningMotorChannel, rev::CANSparkMaxLowLevel::MotorType::kBrushless),
-     m_dutyCycleEncoder(dutyCycleChannel)
+     m_dutyCycleInput(dutyCycleChannel),
+     m_dutyCycleEncoder(m_dutyCycleInput)
 {
   // Set the distance per pulse for the drive encoder. We can simply use the
   // distance traveled for one rotation of the wheel divided by the encoder
@@ -59,7 +60,7 @@ void SwerveModule::SetDesiredState(
     frc::SmartDashboard::PutNumber(m_name + "/Target Angle", setpoint.to<double>());
     //m_turningPIDController.SetReference(setpoint.to<double>(), rev::ControlType::kPosition);
 
-    frc::SmartDashboard::PutNumber(m_name + "/Current Angle Abs (Dist)", m_dutyCycleEncoder.GetDistance());
+    frc::SmartDashboard::PutNumber(m_name + "/Current Angle Abs", m_dutyCycleEncoder.GetOutput());
     frc::SmartDashboard::PutNumber(m_name + "/Current Angle Abs (Freq)", m_dutyCycleEncoder.GetFrequency());
 }
 

@@ -37,10 +37,10 @@ class Drivetrain {
   frc::Translation2d m_backLeftLocation{-0.381_m, +0.381_m};
   frc::Translation2d m_backRightLocation{-0.381_m, -0.381_m};
 
-  SwerveModule m_frontLeft{1, 11, 1, "front left"};
-  SwerveModule m_frontRight{2, 12, 2, "front right"};
-  SwerveModule m_backLeft{4, 14, 4, "back left"};
-  SwerveModule m_backRight{3, 13, 3, "back right"};
+  SwerveModule m_frontLeft{1, 11, 5, "front left"};
+  SwerveModule m_frontRight{2, 12, 6, "front right"};
+  SwerveModule m_backLeft{4, 14, 7, "back left"};
+  SwerveModule m_backRight{3, 13, 8, "back right"};
 
   AHRS m_navX{frc::SPI::kMXP};
 
