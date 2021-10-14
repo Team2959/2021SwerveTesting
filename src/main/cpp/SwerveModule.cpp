@@ -15,7 +15,9 @@ SwerveModule::SwerveModule(const int driveMotorChannel,
     : m_driveMotor(driveMotorChannel, rev::CANSparkMaxLowLevel::MotorType::kBrushless),
      m_turningMotor(turningMotorChannel, rev::CANSparkMaxLowLevel::MotorType::kBrushless),
      m_dutyCycleInput(dutyCycleChannel),
-     m_dutyCycleEncoder(m_dutyCycleInput)
+     m_dutyCycleEncoder(m_dutyCycleInput),
+     m_drivePIDController(m_driveMotor.GetPIDController()),
+     m_turningPIDController(m_turningMotor.GetPIDController())
 {
   // Set the distance per pulse for the drive encoder. We can simply use the
   // distance traveled for one rotation of the wheel divided by the encoder
@@ -23,13 +25,15 @@ SwerveModule::SwerveModule(const int driveMotorChannel,
   m_driveEncoder.SetPositionConversionFactor(kDrivePositionFactor);
   m_driveEncoder.SetVelocityConversionFactor(kDrivePositionFactor / 60.0);
 
-  m_drivePIDController.SetP(1.0);
+  m_drivePIDController.SetP(0.4);
   m_drivePIDController.SetI(0.0);
   m_drivePIDController.SetD(0.0);
 
-  m_turningPIDController.SetP(1.0);
-  m_turningPIDController.SetI(0.0);
+  m_turningPIDController.SetFeedbackDevice(m_turningEncoder);
+  m_turningPIDController.SetP(0.4);
+  m_turningPIDController.SetI(0.00001);
   m_turningPIDController.SetD(0.0);
+  m_turningPIDController.SetIZone(1.0);
 
   // Set the distance (in this case, angle) per pulse for the turning encoder.
   // This is the the angle through an entire rotation (2 * wpi::math::pi)
@@ -58,7 +62,7 @@ void SwerveModule::SetDesiredState(
 
     frc::SmartDashboard::PutNumber(m_name + "/Current Angle", m_turningEncoder.GetPosition());
     frc::SmartDashboard::PutNumber(m_name + "/Target Angle", setpoint.to<double>());
-    //m_turningPIDController.SetReference(setpoint.to<double>(), rev::ControlType::kPosition);
+    m_turningPIDController.SetReference(setpoint.to<double>(), rev::ControlType::kPosition);
 
     frc::SmartDashboard::PutNumber(m_name + "/Current Angle Abs", m_dutyCycleEncoder.GetOutput());
     frc::SmartDashboard::PutNumber(m_name + "/Current Angle Abs (Freq)", m_dutyCycleEncoder.GetFrequency());

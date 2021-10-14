@@ -51,7 +51,7 @@ public:
     }
 
 private:
-    frc::XboxController m_controller{0};
+    //frc::XboxController m_controller{0};
     frc::Joystick m_joystick{0};
     cwtech::UniformConditioning m_conditioning{};
     Drivetrain m_swerve;
