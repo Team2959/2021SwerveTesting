@@ -3,6 +3,7 @@
 // the WPILib BSD license file in the root directory of this project.
 
 #include "Drivetrain.h"
+#include "Constants.h"
 
 #include <frc/smartdashboard/SmartDashboard.h>
 
@@ -31,11 +32,11 @@ void Drivetrain::UpdateOdometry() {
 }
 
 void Drivetrain::SetInitialSwervePositions()
-{
-  m_frontLeft.SetInitialPosition(0);
-  m_frontRight.SetInitialPosition(0);
-  m_backLeft.SetInitialPosition(0);
-  m_backRight.SetInitialPosition(0);
+{    
+    m_frontLeft.SetInitialPosition();
+    m_frontRight.SetInitialPosition();
+    m_backLeft.SetInitialPosition();
+    m_backRight.SetInitialPosition();
 }
 
 void Drivetrain::DirectMotorDrive(bool drive, int motor, double percentage)

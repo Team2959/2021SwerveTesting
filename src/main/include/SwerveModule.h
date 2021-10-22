@@ -20,12 +20,12 @@
 
 class SwerveModule {
  public:
-    SwerveModule(int driveMotorChannel, int turningMotorChannel, int dutyCycleChannel, std::string name);
+    SwerveModule(int driveMotorChannel, int turningMotorChannel, int dutyCycleChannel, std::string name, units::radian_t turnOffset);
     frc::SwerveModuleState GetState();
     void SetDesiredState(const frc::SwerveModuleState& state);
-    void SetInitialPosition(double offsetInRadians);
+    void SetInitialPosition();
     void DirectDrive(bool drive, double percentage);
-
+    double GetAbsoluteEncoderPosition();
  private:
     static constexpr double kWheelRadius = 2.0 * 0.254; // 2" * 0.254 m / inch
     static constexpr int kEncoderResolution = 4096;
@@ -50,6 +50,8 @@ class SwerveModule {
     
     rev::CANPIDController m_drivePIDController;
     rev::CANPIDController m_turningPIDController;
+
+    units::radian_t m_turnOffset;
 
     //   frc2::PIDController m_drivePIDController{1.0, 0, 0};
     /*frc::ProfiledPIDController<units::radians> m_turningPIDController{
