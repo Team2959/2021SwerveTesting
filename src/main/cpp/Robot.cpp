@@ -17,9 +17,12 @@ class Robot : public frc::TimedRobot {
 public:
     void RobotInit() override
     {
-        //std::thread threadRunFast{Dashboard::RunFast};
-        //std::thread threadRunSlow{Dashboard::RunSlow};
-        //std::thread threadRunReallySlow{Dashboard::RunReallySlow};
+        std::thread threadRunFast{Dashboard::RunFast};
+        std::thread threadRunSlow{Dashboard::RunSlow};
+        std::thread threadRunReallySlow{Dashboard::RunReallySlow};
+        threadRunFast.detach();
+        threadRunSlow.detach();
+        threadRunReallySlow.detach();
         m_swerve.SetInitialSwervePositions();
 
         m_conditioning.SetDeadband(0.2);
@@ -28,6 +31,7 @@ public:
         frc::SmartDashboard::PutBoolean("Drive or Turn", true);
         frc::SmartDashboard::PutNumber("Motor Corner", 1);
         frc::SmartDashboard::PutNumber("Motor Percentage", 0);
+
     }
 
     void AutonomousPeriodic() override {
@@ -39,6 +43,11 @@ public:
     {
         DriveWithJoystick(true);
         m_swerve.UpdateOdometry();
+    }
+
+    void TeleopInit() override 
+    {
+        m_swerve.SetInitialSwervePositions();
     }
 
     void TestPeriodic() override

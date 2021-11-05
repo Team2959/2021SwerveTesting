@@ -72,7 +72,7 @@ void SwerveModule::SetDesiredState(
 
     frc::SmartDashboard::PutNumber(m_name + "/Current Angle", frc::Rotation2d{units::radian_t{m_turningEncoder.GetPosition()}}.Radians().to<double>());
     frc::SmartDashboard::PutNumber(m_name + "/Target Angle", setpoint.to<double>());
-    //m_turningPIDController.SetReference(setpoint.to<double>(), rev::ControlType::kPosition);
+    m_turningPIDController.SetReference(setpoint.to<double>(), rev::ControlType::kPosition);
 
     frc::SmartDashboard::PutNumber(m_name + "/Current Angle Abs", GetAbsoluteEncoderPosition());
     frc::SmartDashboard::PutNumber(m_name + "/Current Angle Abs (Freq)", m_dutyCycleEncoder.GetFrequency());
@@ -80,7 +80,10 @@ void SwerveModule::SetDesiredState(
 
 void SwerveModule::SetInitialPosition()
 {
-  m_turningEncoder.SetPosition(GetAbsoluteEncoderPosition() / m_turningEncoder.GetPositionConversionFactor());
+  m_turningEncoder.SetPosition(GetAbsoluteEncoderPosition()/* / m_turningEncoder.GetPositionConversionFactor()*/);
+  frc::SmartDashboard::PutNumber(m_name + "/Current Angle Abs", GetAbsoluteEncoderPosition());
+  frc::SmartDashboard::PutNumber(m_name + "/Current Angle", frc::Rotation2d{units::radian_t{m_turningEncoder.GetPosition()}}.Radians().to<double>());
+
 }
 
 void SwerveModule::DirectDrive(bool drive, double percentage)
