@@ -23,7 +23,7 @@ public:
         threadRunFast.detach();
         threadRunSlow.detach();
         threadRunReallySlow.detach();
-        m_swerve.SetInitialSwervePositions();
+        //m_swerve.SetInitialSwervePositions();
 
         m_conditioning.SetDeadband(0.2);
         m_conditioning.SetExponent(4.0);
@@ -41,13 +41,17 @@ public:
 
     void TeleopPeriodic() override
     {
-        DriveWithJoystick(true);
+        DriveWithJoystick(false);
         m_swerve.UpdateOdometry();
     }
 
     void TeleopInit() override 
     {
-        m_swerve.SetInitialSwervePositions();
+        if(!m_haveSetInitalPositions)
+        {
+            m_swerve.SetInitialSwervePositions();
+            m_haveSetInitalPositions = true;
+        }
     }
 
     void TestPeriodic() override
@@ -65,6 +69,8 @@ private:
     cwtech::UniformConditioning m_conditioning{};
     Drivetrain m_swerve;
 
+    bool m_haveSetInitalPositions = false;
+
     // Slew rate limiters to make joystick inputs more gentle; 1/3 sec from 0
     // to 1.
     frc::SlewRateLimiter<units::scalar> m_xspeedLimiter{3 / 1_s};
@@ -76,7 +82,7 @@ private:
         // negative values when we push forward.
         auto x = m_joystick.GetX();
         x = m_conditioning.Condition(x);
-        auto xSpeed = -x * Drivetrain::kMaxSpeed;
+        auto xSpeed = x * Drivetrain::kMaxSpeed;
 
         // Get the y speed or sideways/strafe speed. We are inverting this because
         // we want a positive value when we pull to the left. Xbox controllers
@@ -92,7 +98,7 @@ private:
         auto r = m_joystick.GetTwist();
         r = m_conditioning.Condition(r);
         auto rot = -r * Drivetrain::kMaxAngularSpeed;
-
+        rot = units::radians_per_second_t{0}; // TODO remove this later
         m_swerve.Drive(xSpeed, ySpeed, rot, fieldRelative);
     }
 };
