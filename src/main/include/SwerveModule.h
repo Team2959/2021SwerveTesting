@@ -25,6 +25,7 @@ class SwerveModule {
     void SetDesiredState(const frc::SwerveModuleState& state);
     void SetInitialPosition();
     void DirectDrive(bool drive, double percentage);
+    void UpdateDashboardOnEnable();
     double GetAbsoluteEncoderPosition();
  private:
     static constexpr double kWheelRadius = 2.0 * 0.254; // 2" * 0.254 m / inch

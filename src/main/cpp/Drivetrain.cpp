@@ -24,6 +24,7 @@ void Drivetrain::Drive(units::meters_per_second_t xSpeed,
   m_frontRight.SetDesiredState(fr);
   m_backLeft.SetDesiredState(bl);
   m_backRight.SetDesiredState(br);
+
 }
 
 void Drivetrain::UpdateOdometry() {
@@ -57,4 +58,13 @@ void Drivetrain::DirectMotorDrive(bool drive, int motor, double percentage)
       m_backLeft.DirectDrive(drive, percentage);
       break;
   }
+}
+
+
+void Drivetrain::UpdateDashboardOnUpdate()
+{
+  m_frontLeft.UpdateDashboardOnEnable();
+  m_frontRight.UpdateDashboardOnEnable();
+  m_backLeft.UpdateDashboardOnEnable();
+  m_backRight.UpdateDashboardOnEnable();
 }

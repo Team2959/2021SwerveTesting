@@ -52,6 +52,7 @@ public:
             m_swerve.SetInitialSwervePositions();
             m_haveSetInitalPositions = true;
         }
+        m_swerve.UpdateDashboardOnUpdate();
     }
 
     void TestPeriodic() override
@@ -81,7 +82,7 @@ private:
         // Get the x speed. We are inverting this because Xbox controllers return
         // negative values when we push forward.
         auto x = m_joystick.GetX();
-        x = m_conditioning.Condition(x);
+        x = -m_conditioning.Condition(x);
         auto xSpeed = x * Drivetrain::kMaxSpeed;
 
         // Get the y speed or sideways/strafe speed. We are inverting this because
@@ -89,7 +90,7 @@ private:
         // return positive values when you pull to the right by default.
         auto y = m_joystick.GetY();
         y = m_conditioning.Condition(y);
-        auto ySpeed = -y * Drivetrain::kMaxSpeed;
+        auto ySpeed = y * Drivetrain::kMaxSpeed;
 
         // Get the rate of angular rotation. We are inverting this because we want a
         // positive value when we pull to the left (remember, CCW is positive in
@@ -98,7 +99,6 @@ private:
         auto r = m_joystick.GetTwist();
         r = m_conditioning.Condition(r);
         auto rot = -r * Drivetrain::kMaxAngularSpeed;
-        rot = units::radians_per_second_t{0}; // TODO remove this later
         m_swerve.Drive(xSpeed, ySpeed, rot, fieldRelative);
     }
 };
