@@ -33,6 +33,7 @@ class Drivetrain {
              units::meters_per_second_t ySpeed, units::radians_per_second_t rot,
              bool fieldRelative);
   void UpdateOdometry();
+  std::string OutputOdometry();
   void SetInitialSwervePositions();
   void UpdateDashboardOnUpdate();
   void DirectMotorDrive(bool drive, int motor, double percentage);
@@ -41,7 +42,7 @@ class Drivetrain {
       3.0_mps;  // 3 meters per second
   static constexpr units::radians_per_second_t kMaxAngularSpeed{
       wpi::math::pi};  // 1/2 rotation per second
-
+  std::string n_name = "drivetrain/";
  private:
   // frc::Translation2d m_frontLeftLocation{+0.381_m, +0.381_m};
   // frc::Translation2d m_frontRightLocation{+0.381_m, -0.381_m};

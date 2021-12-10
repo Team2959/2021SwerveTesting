@@ -4,6 +4,10 @@
 
 #include "Drivetrain.h"
 #include "Constants.h"
+#include "Logging.h"
+#include <ctime>
+#include <unistd.h>
+#include <hal/cpp/fpga_clock.h>
 
 #include <frc/smartdashboard/SmartDashboard.h>
 
@@ -31,6 +35,27 @@ void Drivetrain::UpdateOdometry() {
   m_odometry.Update(m_navX.GetRotation2d(), m_frontLeft.GetState(),
                     m_frontRight.GetState(), m_backLeft.GetState(),
                     m_backRight.GetState());
+}
+
+
+
+std::string Drivetrain::OutputOdometry() {
+  //Get Pose
+  auto pose = m_odometry.GetPose();
+  // Get Position (x,y) from pose
+  auto poseX = pose.X();
+  auto poseY = pose.Y();
+  // Publish to smart dashboard
+  frc::SmartDashboard::PutNumber(n_name + "/pose x", poseX.to<double>());
+  frc::SmartDashboard::PutNumber(n_name + "/pose y", poseY.to<double>());
+
+  std::string data = std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(hal::fpga_clock::now().time_since_epoch()).count()) + ","
+        + std::to_string(m_navX.GetAngle()) + ","
+        + std::to_string(double(pose.X())) + ","
+        + std::to_string(double(pose.Y())) + ","
+        + "\n";
+    return data;
+
 }
 
 void Drivetrain::SetInitialSwervePositions()

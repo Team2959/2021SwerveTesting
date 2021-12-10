@@ -11,6 +11,7 @@
 #include "Dashboard.h"
 #include <thread>
 #include "Drivetrain.h"
+#include "Logging.h"
 #include <frc/smartdashboard/SmartDashboard.h>
 
 class Robot : public frc::TimedRobot {
@@ -43,10 +44,13 @@ public:
     {
         DriveWithJoystick(false);
         m_swerve.UpdateOdometry();
+        auto logLine = m_swerve.OutputOdometry();
+        m_logging.Log(logLine);
     }
 
     void TeleopInit() override 
     {
+        m_logging.StartNewLogFile();
         if(!m_haveSetInitalPositions)
         {
             m_swerve.SetInitialSwervePositions();
@@ -69,6 +73,7 @@ private:
     frc::Joystick m_joystick{0};
     cwtech::UniformConditioning m_conditioning{};
     Drivetrain m_swerve;
+    Logging m_logging;
 
     bool m_haveSetInitalPositions = false;
 
